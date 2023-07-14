@@ -23,7 +23,7 @@ const Header = ({ user }) => {
   }, [user]);
 
   return (
-    <header>
+    <header className="header">
       <div className="logo">Bagaggio</div>
       {user && (
         <div className="user-info">
