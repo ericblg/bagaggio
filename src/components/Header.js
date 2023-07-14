@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react';
 
 const Header = ({ user }) => {
-  const [userImage, setUserImage] = useState('');
+  const [imagemUsuario, setImagemUsuario] = useState('');
 
   useEffect(() => {
-    const fetchUserImage = async () => {
+    const buscarImagemUsuario = async () => {
       try {
-        const response = await fetch(user.avatar_url);
-        if (response.ok) {
-          const imageData = await response.blob();
-          const imageUrl = URL.createObjectURL(imageData);
-          setUserImage(imageUrl);
+        const resposta = await fetch(user.avatar_url);
+        if (resposta.ok) {
+          const dadosImagem = await resposta.blob();
+          const urlImagem = URL.createObjectURL(dadosImagem);
+          setImagemUsuario(urlImagem);
         }
-      } catch (error) {
-        console.error(error);
+      } catch (erro) {
+        console.error(erro);
       }
     };
 
     if (user && user.avatar_url) {
-      fetchUserImage();
+      buscarImagemUsuario();
     }
   }, [user]);
 
@@ -27,8 +27,8 @@ const Header = ({ user }) => {
       <div className="logo">Bagaggio</div>
       {user && (
         <div className="user-info">
-          {userImage && (
-            <img src={userImage} alt="User" className="user-photo" />
+          {imagemUsuario && (
+            <img src={imagemUsuario} alt="Usuário" className="user-photo" />
           )}
           <span className="user-name">{user.name}</span>
         </div>
