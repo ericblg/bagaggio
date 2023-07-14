@@ -19,15 +19,15 @@ const App = () => {
 
   return (
     <div className="App">
-    <Header user={user} />
-    <div className="container">
-      {!user ? (
-        <Login onLogin={handleLogin} />
-      ) : (
-        <Home user={user} onLogout={handleLogout} />
-      )}
+      <Header user={user} />
+      <div className="container">
+        {!user ? (
+          <Login onLogin={handleLogin} />
+        ) : (
+          <Home user={user} onLogout={handleLogout} />
+        )}
+      </div>
     </div>
-  </div>
   );
 };
 
