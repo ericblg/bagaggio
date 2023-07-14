@@ -1,28 +1,27 @@
 import React, { useState } from 'react';
 
 const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
-  const [error, setError] = useState('');
+  const [usuario, setUsuario] = useState('');
+  const [erro, setErro] = useState('');
 
-  const handleLogin = async () => {
+  const fazerLogin = async () => {
     try {
-      const response = await fetch(`https://api.github.com/users/${username}`);
-      if (response.ok) {
-        const userData = await response.json();
-        onLogin(userData);
+      const resposta = await fetch(`https://api.github.com/users/${usuario}`);
+      if (resposta.ok) {
+        const dadosUsuario = await resposta.json();
+        onLogin(dadosUsuario);
       } else {
-        const errorData = await response.json();
-        setError(errorData.message);
+        const dadosErro = await resposta.json();
+        setErro(dadosErro.message);
       }
-    } catch (error) {
-      setError('Erro ao connectar a GitHub API');
+    } catch (erro) {
+      setErro('Erro ao conectar à API do GitHub');
     }
   };
 
   return (
-    
     <div className='login-container'>
-        <img
+      <img
         src="./github.png"
         alt="GitHub"
         className="github-image"
@@ -30,12 +29,12 @@ const Login = ({ onLogin }) => {
       <h2>Login</h2>
       <input
         type="text"
-        placeholder="Username do GitHub"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        placeholder="Nome de usuário do GitHub"
+        value={usuario}
+        onChange={(e) => setUsuario(e.target.value)}
       />
-      <button onClick={handleLogin}>Login</button>
-      {error && <p>{error}</p>}
+      <button onClick={fazerLogin}>Entrar</button>
+      {erro && <p>{erro}</p>}
     </div>
   );
 };

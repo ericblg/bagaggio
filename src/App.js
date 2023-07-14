@@ -7,12 +7,12 @@ import Header from './components/Header';
 const App = () => {
   const [user, setUser] = useState(null);
 
-  const handleLogin = (userData) => {
+  const fazerLogin = (userData) => {
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
   };
 
-  const handleLogout = () => {
+  const fazerLogout = () => {
     localStorage.removeItem('user');
     setUser(null);
   };
@@ -22,9 +22,9 @@ const App = () => {
       <Header user={user} />
       <div className="container">
         {!user ? (
-          <Login onLogin={handleLogin} />
+          <Login onLogin={fazerLogin} />
         ) : (
-          <Home user={user} onLogout={handleLogout} />
+          <Home user={user} onLogout={fazerLogout} />
         )}
       </div>
     </div>
