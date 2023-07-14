@@ -2,117 +2,117 @@ import React, { useState, useEffect } from 'react';
 
 
 const Home = ({ user, onLogout }) => {
-  const [users, setUsers] = useState([]);
-  const [name, setName] = useState('');
-  const [cep, setCEP] = useState('');
-  const [address, setAddress] = useState({
-    street: '',
-    neighborhood: '',
-    city: '',
+  const [usuarios, setUsuarios] = useState([]);
+  const [nome, setNome] = useState('');
+  const [cep, setCep] = useState('');
+  const [endereco, setEndereco] = useState({
+    rua: '',
+    bairro: '',
+    cidade: '',
     uf: '',
   });
-  const [editMode, setEditMode] = useState(false);
-  const [editIndex, setEditIndex] = useState(-1);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [deleteIndex, setDeleteIndex] = useState(-1);
+  const [modoEdicao, setModoEdicao] = useState(false);
+  const [indiceEdicao, setIndiceEdicao] = useState(-1);
+  const [exibirDialogoConfirmacao, setExibirDialogoConfirmacao] = useState(false);
+  const [indiceExclusao, setIndiceExclusao] = useState(-1);
 
   useEffect(() => {
-    const fetchAddress = async () => {
+    const buscarEndereco = async () => {
       try {
-        const cepFormatted = cep.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+        const cepFormatado = cep.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
 
-        if (cepFormatted.length === 8) {
-          const responseViaCEP = await fetch(`https://viacep.com.br/ws/${cepFormatted}/json/`);
-          const addressDataViaCEP = await responseViaCEP.json();
+        if (cepFormatado.length === 8) {
+          const responseViaCEP = await fetch(`https://viacep.com.br/ws/${cepFormatado}/json/`);
+          const dadosEnderecoViaCEP = await responseViaCEP.json();
 
-          if (!responseViaCEP.ok || addressDataViaCEP.erro) {
+          if (!responseViaCEP.ok || dadosEnderecoViaCEP.erro) {
             throw new Error('CEP inválido');
           }
 
-          setAddress({
-            street: addressDataViaCEP.logradouro,
-            neighborhood: addressDataViaCEP.bairro,
-            city: addressDataViaCEP.localidade,
-            uf: addressDataViaCEP.uf,
+          setEndereco({
+            rua: dadosEnderecoViaCEP.logradouro,
+            bairro: dadosEnderecoViaCEP.bairro,
+            cidade: dadosEnderecoViaCEP.localidade,
+            uf: dadosEnderecoViaCEP.uf,
           });
         } else {
-          setAddress({
-            street: '',
-            neighborhood: '',
-            city: '',
+          setEndereco({
+            rua: '',
+            bairro: '',
+            cidade: '',
             uf: '',
           });
         }
       } catch (error) {
-        setAddress({
-          street: '',
-          neighborhood: '',
-          city: '',
+        setEndereco({
+          rua: '',
+          bairro: '',
+          cidade: '',
           uf: '',
         });
         console.error(error);
       }
     };
 
-    fetchAddress();
+    buscarEndereco();
   }, [cep]);
 
-  const handleAddUser = () => {
-    if (name.trim() !== '') {
-      const newUser = {
-        name,
-        address: {
-          street: address.street,
-          neighborhood: address.neighborhood,
-          city: address.city,
-          uf: address.uf,
+  const adicionarUsuario = () => {
+    if (nome.trim() !== '') {
+      const novoUsuario = {
+        nome,
+        endereco: {
+          rua: endereco.rua,
+          bairro: endereco.bairro,
+          cidade: endereco.cidade,
+          uf: endereco.uf,
         },
       };
 
-      if (editMode) {
-        const updatedUsers = [...users];
-        updatedUsers[editIndex] = newUser;
-        setUsers(updatedUsers);
-        setEditMode(false);
-        setEditIndex(-1);
+      if (modoEdicao) {
+        const usuariosAtualizados = [...usuarios];
+        usuariosAtualizados[indiceEdicao] = novoUsuario;
+        setUsuarios(usuariosAtualizados);
+        setModoEdicao(false);
+        setIndiceEdicao(-1);
       } else {
-        setUsers([...users, newUser]);
+        setUsuarios([...usuarios, novoUsuario]);
       }
 
-      setName('');
-      setCEP('');
-      setAddress({
-        street: '',
-        neighborhood: '',
-        city: '',
+      setNome('');
+      setCep('');
+      setEndereco({
+        rua: '',
+        bairro: '',
+        cidade: '',
         uf: '',
       });
     }
   };
 
-  const handleEditUser = (index) => {
-    const user = users[index];
-    setName(user.name);
-    setCEP('');
-    setAddress(user.address);
-    setEditMode(true);
-    setEditIndex(index);
+  const editarUsuario = (indice) => {
+    const usuario = usuarios[indice];
+    setNome(usuario.nome);
+    setCep('');
+    setEndereco(usuario.endereco);
+    setModoEdicao(true);
+    setIndiceEdicao(indice);
   };
 
-  const handleDeleteUser = (index) => {
-    setDeleteIndex(index);
-    setShowConfirmDialog(true);
+  const excluirUsuario = (indice) => {
+    setIndiceExclusao(indice);
+    setExibirDialogoConfirmacao(true);
   };
 
-  const confirmDeleteUser = () => {
-    const updatedUsers = [...users];
-    updatedUsers.splice(deleteIndex, 1);
-    setUsers(updatedUsers);
-    setShowConfirmDialog(false);
+  const confirmarExclusaoUsuario = () => {
+    const usuariosAtualizados = [...usuarios];
+    usuariosAtualizados.splice(indiceExclusao, 1);
+    setUsuarios(usuariosAtualizados);
+    setExibirDialogoConfirmacao(false);
   };
 
-  const cancelDeleteUser = () => {
-    setShowConfirmDialog(false);
+  const cancelarExclusaoUsuario = () => {
+    setExibirDialogoConfirmacao(false);
   };
 
   return (
@@ -125,52 +125,52 @@ const Home = ({ user, onLogout }) => {
         <input
           type="text"
           placeholder="Nome"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
         />
         <input
           type="text"
           placeholder="CEP"
           value={cep}
-          onChange={(e) => setCEP(e.target.value)}
+          onChange={(e) => setCep(e.target.value)}
         />
         <input
           type="text"
           placeholder="Rua"
-          value={address.street}
+          value={endereco.rua}
           disabled
         />
         <input
           type="text"
           placeholder="Bairro"
-          value={address.neighborhood}
+          value={endereco.bairro}
           disabled
         />
         <input
           type="text"
           placeholder="Cidade"
-          value={address.city}
+          value={endereco.cidade}
           disabled
         />
-        <input type="text" placeholder="UF" value={address.uf} disabled />
-        <button onClick={handleAddUser}>{editMode ? 'Atualizar' : 'Cadastrar'}</button>
+        <input type="text" placeholder="UF" value={endereco.uf} disabled />
+        <button onClick={adicionarUsuario}>{modoEdicao ? 'Atualizar' : 'Cadastrar'}</button>
         <ul>
-          {users.map((user, index) => (
-            <li key={index}>
-              {user.name}
+          {usuarios.map((usuario, indice) => (
+            <li key={indice}>
+              {usuario.nome}
               <br />
-              Endereço: {user.address.street}, {user.address.neighborhood}, {user.address.city} - {user.address.uf}
+              Endereço: {usuario.endereco.rua}, {usuario.endereco.bairro}, {usuario.endereco.cidade} - {usuario.endereco.uf}
               <br />
-              <button onClick={() => handleEditUser(index)}>Editar</button>
-              <button onClick={() => handleDeleteUser(index)}>Remover</button>
+              <button onClick={() => editarUsuario(indice)}>Editar</button>
+              <button onClick={() => excluirUsuario(indice)}>Remover</button>
             </li>
           ))}
         </ul>
-        {showConfirmDialog && (
+        {exibirDialogoConfirmacao && (
           <div>
             <p>Tem certeza de que deseja remover o usuário?</p>
-            <button onClick={confirmDeleteUser}>Sim</button>
-            <button onClick={cancelDeleteUser}>Não</button>
+            <button onClick={confirmarExclusaoUsuario}>Sim</button>
+            <button onClick={cancelarExclusaoUsuario}>Não</button>
           </div>
         )}
       </div>
