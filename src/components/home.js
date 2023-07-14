@@ -16,45 +16,45 @@ const Home = ({ user, onLogout }) => {
   const [deleteIndex, setDeleteIndex] = useState(-1);
 
   useEffect(() => {
-    fetchAddress();
-  }, [cep]);
+    const fetchAddress = async () => {
+      try {
+        const cepFormatted = cep.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
 
-  const fetchAddress = async () => {
-    try {
-      const cepFormatted = cep.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+        if (cepFormatted.length === 8) {
+          const responseViaCEP = await fetch(`https://viacep.com.br/ws/${cepFormatted}/json/`);
+          const addressDataViaCEP = await responseViaCEP.json();
 
-      if (cepFormatted.length === 8) {
-        const responseViaCEP = await fetch(`https://viacep.com.br/ws/${cepFormatted}/json/`);
-        const addressDataViaCEP = await responseViaCEP.json();
+          if (!responseViaCEP.ok || addressDataViaCEP.erro) {
+            throw new Error('CEP inválido');
+          }
 
-        if (!responseViaCEP.ok || addressDataViaCEP.erro) {
-          throw new Error('CEP inválido');
+          setAddress({
+            street: addressDataViaCEP.logradouro,
+            neighborhood: addressDataViaCEP.bairro,
+            city: addressDataViaCEP.localidade,
+            uf: addressDataViaCEP.uf,
+          });
+        } else {
+          setAddress({
+            street: '',
+            neighborhood: '',
+            city: '',
+            uf: '',
+          });
         }
-
-        setAddress({
-          street: addressDataViaCEP.logradouro,
-          neighborhood: addressDataViaCEP.bairro,
-          city: addressDataViaCEP.localidade,
-          uf: addressDataViaCEP.uf,
-        });
-      } else {
+      } catch (error) {
         setAddress({
           street: '',
           neighborhood: '',
           city: '',
           uf: '',
         });
+        console.error(error);
       }
-    } catch (error) {
-      setAddress({
-        street: '',
-        neighborhood: '',
-        city: '',
-        uf: '',
-      });
-      console.error(error);
-    }
-  };
+    };
+
+    fetchAddress();
+  }, [cep]);
 
   const handleAddUser = () => {
     if (name.trim() !== '') {
@@ -116,7 +116,14 @@ const Home = ({ user, onLogout }) => {
 
   return (
     <div>
-      <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+      <div className="header">
+        <div className="header-left">
+          <h2>Bagaggio</h2>
+        </div>
+        <div className="header-right">
+          <img src={user.avatar_url} alt="Avatar" className="user-avatar" />
+          <span className="user-name">{user.name}</span>
+        </div>
       </div>
       <div className="container">
         <div className="content">
